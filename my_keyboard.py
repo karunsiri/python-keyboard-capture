@@ -5,10 +5,10 @@ from evdev import InputDevice, list_devices, ecodes, categorize
 class Keyboard:
     # QWERTY -> DVORAK scancode conversion
     DVORAK_CONVERSIONS = {
-        5: 27, 6: 13, 7: 8, 8: 55, 9: 24, 10: 12, 11: 7, 12: 6, 13: 11,
-        14: 23, 15: 17, 17: 5, 18: 21, 19: 15, 20: 52, 21: 19, 22: 18, 23: 28,
-        24: 10, 25: 14, 26: 54, 27: 20, 28: 9, 29: 51, 45: 47, 46: 48, 47: 56,
-        48: 46, 51: 22, 52: 45, 54: 26, 55: 25, 56: 29
+        12: 26, 13: 27,
+        16: 39, 17: 51, 18: 52, 19: 25, 20: 21, 21: 33, 22: 34, 23: 46, 24: 19, 25: 38, 26: 53, 27: 13,
+        31: 24, 32: 18, 33: 22, 34: 23, 35: 32, 36: 35, 37: 20, 38: 49, 39: 31, 40: 12,
+        44: 40, 45: 16, 46: 36, 47: 37, 48: 45, 49: 48, 51: 17, 52: 47, 53: 44
     }
 
     def __init__(self):
@@ -69,8 +69,8 @@ class Keyboard:
                         self.toggle_state(event)
 
     def toggle_state(self, event):
-        code = ecodes.KEY[event.code]
-        print(code)
+        converted = self.DVORAK_CONVERSIONS.get(event.code, event.code)
+        print("You typed", ecodes.KEY[converted])
 
     def is_connected(self):
         return len(self.devices) > 0
