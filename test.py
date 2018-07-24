@@ -1,11 +1,17 @@
-#!/usr/bin/python2.7
+#!/usr/bin/env python
 
-import my_keyboard
-
+import signal
+import sys
 from my_keyboard import Keyboard
 
-keyboard = Keyboard()
-keyboard.fetch_keyboard()
+def sigint_handler(sig, frame):
+    print("Exiting Capture...")
+    sys.exit(0)
 
-if keyboard.devices != None:
-    keyboard.capture()
+# Handle SIGINT gracefully
+signal.signal(signal.SIGINT, sigint_handler)
+
+keyboard = Keyboard()
+
+# Start event loop
+keyboard.capture()
