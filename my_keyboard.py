@@ -1,3 +1,4 @@
+import dbus
 import time
 from select import select
 from evdev import InputDevice, list_devices, ecodes, categorize
@@ -34,6 +35,7 @@ class Keyboard:
 
     def __init__(self):
         self.__reset_device_state()
+        self.__init_service_bus()
 
     def capture(self):
         while True:
@@ -66,8 +68,14 @@ class Keyboard:
             0x00
         ]
 
+    def __init_service_bus(self):
+        self.bus = dbus.SystemBus()
+        self.service = self.bus.get_object("org.karunsiri.btkeyboard", "/org/karunsiri/btkeyboard")
+        self.interface = dbus.Interface(self.service, "org.karunsiri.btkeyboard")
+
     # Will block until a keyboard is connected
     def __fetch_keyboard(self):
+        print("Waiting for keyboard...")
         while True:
             devices = [InputDevice(path) for path in list_devices()]
             devices = [d for d in devices if "keyboard" in d.name.lower()]
@@ -88,6 +96,7 @@ class Keyboard:
                     # Is a keypress and only care for keyup and keydown
                     if event.type == ecodes.EV_KEY and event.value < 2:
                         self.__toggle_state(event)
+                        self.__send_input()
 
     def __toggle_state(self, event):
         index = self.MODIFIER_KEYS.get(event.code)
@@ -120,6 +129,14 @@ class Keyboard:
             elif self.state[i] == 0x00 and event.value == 1:
                 self.state[i] = code
                 break
+
+    def __send_input(self):
+        _str = ""
+        modifier_bits = self.state[2]
+        for bit in modifier_bits:
+            _str += str(bit)
+
+        self.interface.send_keys(int(_str, 2), self.state[4:10])
 
     def __is_connected(self):
         return len(self.devices) > 0
