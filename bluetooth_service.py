@@ -6,7 +6,7 @@ import time
 import dbus
 import bluetooth
 import signal
-from pgi.repository import GObject
+from gi.repository import GObject
 from bluetooth import *
 from dbus import service
 from dbus.mainloop.glib import DBusGMainLoop
