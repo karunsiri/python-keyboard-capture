@@ -157,7 +157,6 @@ class MyKeyboardService(dbus.service.Object):
                 string += chr(code)
             count += 1
 
-        print(string)
         self.device.send_string(string)
 
 if __name__ == "__main__":

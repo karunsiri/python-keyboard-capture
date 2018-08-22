@@ -1,5 +1,6 @@
 import dbus
 import time
+import keytable
 from select import select
 from evdev import InputDevice, list_devices, ecodes, categorize
 
@@ -10,7 +11,7 @@ class Keyboard:
         12: 26, 13: 27,
 
         # Q row
-        16: 39, 17: 51, 18: 52, 19: 25, 20: 21, 21: 33, 22: 34, 23: 46, 24: 19,
+        16: 40, 17: 51, 18: 52, 19: 25, 20: 21, 21: 33, 22: 34, 23: 46, 24: 19,
         25: 38, 26: 53, 27: 13,
 
         # A row
@@ -18,7 +19,7 @@ class Keyboard:
         40: 12,
 
         # Z row
-        44: 40, 45: 16, 46: 36, 47: 37, 48: 45, 49: 48, 51: 17, 52: 47, 53: 44
+        44: 39, 45: 16, 46: 36, 47: 37, 48: 45, 49: 48, 51: 17, 52: 47, 53: 44
     }
 
     # Modifier scancode to modifier array conversion
@@ -45,7 +46,7 @@ class Keyboard:
 
             try:
                 self.__read_event()
-            except OSError:
+            except (OSError, IOError):
                 print("Keyboard disconnected")
                 self.__reset_device_state()
                 time.sleep(1)
@@ -119,15 +120,19 @@ class Keyboard:
         self.state[2][index] = state
 
     def __toggle_normal_key(self, event):
+        # Convert evdev code from DVORAK to QWERTY
         code = self.DVORAK_CONVERSIONS.get(event.code, event.code)
+
+        # Convert evdev code to USB HID usage id
+        hid_code = keytable.convert(code)
 
         for i in range(4, 10):
             # Keyup and is the same key
-            if self.state[i] == code and event.value == 0:
+            if self.state[i] == hid_code and event.value == 0:
                 self.state[i] = 0x00
             ## Keydown and not registered
             elif self.state[i] == 0x00 and event.value == 1:
-                self.state[i] = code
+                self.state[i] = hid_code
                 break
 
     def __send_input(self):
