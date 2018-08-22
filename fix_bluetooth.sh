@@ -1,6 +1,8 @@
 # Terminate on error
 set -e
 
+sudo cp ./org.karunsiri.btkeyboard.conf /etc/dbus-1/system.d
+
 sudo hciconfig hci0 down
 
 sudo apt-get install -y \
