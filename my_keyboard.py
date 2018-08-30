@@ -79,7 +79,9 @@ class Keyboard:
         print("Waiting for keyboard...")
         while True:
             devices = [InputDevice(path) for path in list_devices()]
-            devices = [d for d in devices if "keyboard" in d.name.lower()]
+
+            # Select devices with EV_KEY capability
+            devices = [d for d in devices if 1L in d.capabilities()]
             devices = {d.fd: d for d in devices}
             self.devices = devices
 
