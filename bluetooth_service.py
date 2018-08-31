@@ -97,10 +97,16 @@ class MyKeyboardBluetoothDevice:
     def __init_device(self):
         print("Setting up '%s'..." % self.DEVICE_NAME)
 
-        # Keyboard Peripheral class
+        # Keyboard Peripheral class set to 0x000540
         # See http://domoticx.com/bluetooth-class-of-device-lijst-cod/
-        os.system("hciconfig hci0 class 0x002540")
-        os.system("hciconfig hci0 name '%s'" % (self.DEVICE_NAME))
+        os.system("sudo hciconfig hci0 up")
+        os.system("sudo btmgmt discov yes")
+        os.system("sudo btmgmt pairable on")
+        os.system("sudo btmgmt connectable on")
+        os.system("sudo btmgmt bondable on")
+        os.system("sudo btmgmt name \"Karun Keyboard\"")
+        os.system("sudo btmgmt class 5 64")
+        os.system("sudo btmgmt power on")
 
         # Make discoverable
         os.system("hciconfig hci0 piscan")
