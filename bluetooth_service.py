@@ -69,8 +69,8 @@ class MyKeyboardBluetoothDevice:
 
     def __init__(self):
         print("Setting up a device")
-        self.__init_device()
         self.__init_bluez_profile()
+        self.__init_device()
 
     def listen(self):
         print("Open for connections...")
@@ -97,19 +97,29 @@ class MyKeyboardBluetoothDevice:
     def __init_device(self):
         print("Setting up '%s'..." % self.DEVICE_NAME)
 
+        # os.system("sudo btmgmt power on")
+        # os.system("sudo btmgmt pairable on")
+        # os.system("sudo btmgmt connectable on")
+        # os.system("sudo btmgmt bondable on")
+        # os.system("sudo btmgmt name \"Karun Keyboard\"")
+        # # Pause before changing Bluetooth class for a device to take effect
+        # # Keyboard Peripheral class set to 0x000540
+        # # See http://domoticx.com/bluetooth-class-of-device-lijst-cod/
+        # time.sleep(3)
+        # os.system("sudo hciconfig hci0 class 000540")
+        # os.system("sudo btmgmt discov yes")
+
+        os.system("btmgmt power on")
+        os.system("btmgmt pairable on")
+        os.system("btmgmt connectable on")
+        os.system("btmgmt bondable on")
+        os.system("btmgmt name \"Karun Keyboard\"")
+        # Pause before changing Bluetooth class for a device to take effect
         # Keyboard Peripheral class set to 0x000540
         # See http://domoticx.com/bluetooth-class-of-device-lijst-cod/
-        os.system("sudo hciconfig hci0 up")
-        os.system("sudo btmgmt discov yes")
-        os.system("sudo btmgmt pairable on")
-        os.system("sudo btmgmt connectable on")
-        os.system("sudo btmgmt bondable on")
-        os.system("sudo btmgmt name \"Karun Keyboard\"")
-        os.system("sudo btmgmt class 5 64")
-        os.system("sudo btmgmt power on")
-
-        # Make discoverable
-        os.system("hciconfig hci0 piscan")
+        time.sleep(3)
+        os.system("hciconfig hci0 class 000540")
+        os.system("btmgmt discov yes")
 
     def __init_bluez_profile(self):
         print("Setting up BlueZ profile...")
